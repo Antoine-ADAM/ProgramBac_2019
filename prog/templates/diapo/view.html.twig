@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+{% block title 'Diapo' %}
+{% block body %}
+    <div class="jumbotron">
+        <div class="container m-0">
+            <div class="row">
+                <div class="col align-self-start">
+                    <h1 class="display-4">Diapo: {{ identity.title | title }}</h1>
+                    <p class="lead">{{ identity.description }}</p>
+                </div>
+
+
+                <div class="col align-self-end">
+                    <p class="lead m-0"><em><small>Créer par {{ identity.auteur.firstName|title }} {{ identity.auteur.name|upper }},</small></em></p>
+                    <p class="lead m-0"><em><small>le {{ identity.createAt|date("d/m/Y") }}</small></em></p>
+                    {% if identity.modifAt is not null and identity.modifAt is defined %}
+                        <p class="lead m-0"><em><small>Modifier le {{ identity.modifAt|date("d/m/Y") }}</small></em></p>
+                    {% endif %}
+                    <a class="btn btn-success" href="{{ path("diapo.download",{id: diapo.id}) }}">Téléverser le programme</a>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+        <p>tag</p>
+    </div>
+    <div class="container mt-4">
+        {% for page in pages %}
+            {{ include('diapo/_page.html.twig', {page: page, modif: false, numero: loop.index}) }}
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var textes=[
+            {% for page in pages %}
+            "{{ page.text }}",
+            {% endfor %}""
+        ];
+        textes.pop();
+        function updatePage(id) {
+            window.parent.frames['page'+id].document.getElementById('update').value=textes[id-1];
+            window.parent.frames['page'+id].document.getElementById('update').onchange();
+        }
+        function prePage(i) {
+            document.getElementById('page'+i).style.height=window.parent.frames['page'+i].innerWidth*0.75+"px";
+            window.parent.frames['page'+i].document.getElementById('setup').onchange();
+        }
+        function resizeEventPage(){
+            console.log("resize");
+            for(var i=1; i<=textes.length;i++)prePage(i);
+            setTimeout(function () {
+                for(var i=1;i<=textes.length;i++)updatePage(i);
+            },500)
+        }
+
+        window.addEventListener("load", function () {
+            resizeEventPage();
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,236 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+      
+    
+  <style> 
+    body { padding: 0; margin: 0; } 
+    @font-face {
+      font-family: "TiCalculette";
+      src: url("ti.ttf");
+    }
+    #sgfdsgfdsgfdsgfds{
+      font-family: "TiCalculette";
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div id="emplacement" class="col-xs">
+        <p id="sgfdsgfdsgfdsgfds">a</p>
+      </div>
+    </div>
+  </div>
+  
+  <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="pages.addPage()" data-toggle="modal" data-target="#exampleModalCenter">Ajouter une Page</button>
+                <div class="modal fade" id="exampleModalCenter" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Ajouté une page</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center container">
+                                <div class="row">
+                                    <div class="col">
+                                      <div id="newCalculetteCanvas"></div>
+                                    </div>
+                                    <div class="col">
+                                      <textarea class="" style="font-size: 20px" name="test" id="gestionPage" cols="33" maxlength="429" onkeyup="pages.updateTextCalculatrice(this.value)"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer container">
+                                <div class="col-1 align-self-start">
+                                  <button type="button" id="buttonDelete" onclick="pages.delete()" style="display: none;" class="btn btn-danger text-left" data-dismiss="modal">Supprimer</button>
+                                </div>
+                                <div class="col text-right">
+                                  <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                                  <button type="button" onclick="pages.reset();" class="btn btn-primary">Effacer</button>
+                                  <button type="button" id="buttonValid" onclick="pages.create();" class="btn btn-success" data-dismiss="modal">Créer</button>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script>
+  class Calculette{
+        canvas;
+        text;
+        nCanvas=0;
+        parentCanvas;
+        constructor(parent,defaultText){
+          this.nCanvas=0;
+            this.text=defaultText;
+            this.canvas=document.createElement("canvas");
+            this.canvas.setAttribute("width","500px");
+            this.parentCanvas=parent;
+            this.parentCanvas.appendChild(this.canvas);
+            this.resize();
+        }
+        resize(){
+          setTimeout(function(cal){
+            cal.canvas.setAttribute("height",Math.round(cal.canvas.clientWidth*0.75)+"px");
+            cal.drawBase();
+            cal.drawText(cal.text);
+          },200,this); 
+        }
+        drawBase(){
+            var width=this.canvas.clientWidth;
+            var height=this.canvas.clientHeight;
+            var ctx=this.canvas.getContext("2d");
+            ctx.font=Math.round(height/17.5)+"px TiCalculette";
+            ctx.fillStyle="rgb(230,226,230)";
+            ctx.fillRect(0,0,width,height);
+            ctx.fillStyle="rgb(82,85,82)";
+            ctx.fillRect(0,0,width,height*0.14);
+            //pile
+            ctx.fillStyle="rgb(183,181,183)";
+            ctx.fillRect(width*0.95,height*0.028,width*0.046,height*0.078);
+            ctx.fillRect(width*0.963,height*0.0167,width*0.021,height*0.0167);
+            ctx.fillStyle="rgb(255,255,255)";
+            ctx.fillRect(width*0.959,height*0.033,width*0.029,height*0.067);
+            ctx.fillStyle="rgb(0,159,0)";
+            ctx.fillRect(width*0.963,height*0.033,width*0.021,height*0.067);
+            //text
+            ctx.fillStyle="rgb(255,255,255)";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText("NORMAL FLOTT AUTO RÉEL DEGRÉ MP",0,0);
+            ctx.fillStyle="grey";
+            ctx.fillText("TI-83 Premium CE",width*0.3,height*0.08);
+            ctx.fillText("©antoineadam.fr",width*0.31,height*0.92);
+        }
+        drawText(text=this.text){
+            this.text=text;
+            var ctx=this.canvas.getContext("2d");
+            var width=this.canvas.clientWidth;
+            var height=this.canvas.clientHeight;
+            var i=text.length;
+            var ref=i;
+            var repere=0
+            ctx.fillStyle="rgb(255,255,255)";
+            ctx.fillRect(0.0875*width,0.2*height,width*0.83,height*0.68);
+            ctx.fillStyle="black";
+            while(true){
+                i-=33;
+                if(i>0){
+                    ctx.fillText(text.slice(ref-i-33,ref-i),width*0.0875,height*(0.21+0.05*repere));
+                }else{
+                    ctx.fillText(text.slice(ref-i-33,ref),width*0.0875,height*(0.21+0.05*repere));
+                    break;
+                }
+                if(repere == 12)break;
+                repere++;
+            }
+        }
+        setAttribute(name,value){
+          this.canvas.setAttribute(name,value);
+        }
+        delete(){
+          this.parentCanvas.removeChild(this.canvas);
+        }
+}
+class PageManager{
+  pages=[];
+  parent=document.getElementById("emplacement");
+  calculette;
+  isEdit=false;
+  idTempo;
+  constructor(texts){
+    texts.forEach(function(text,index){
+      this.pages.push(new Page(text,this.parent,index));
+    },this);
+    this.reload();
+    this.calculette=new Calculette(document.getElementById("newCalculetteCanvas"),"");
+  }
+  reset(){
+    this.calculette.drawText("");
+    document.getElementById("gestionPage").value="";
+  }
+  addPage(){
+    this.isEdit=false;
+    this.calculette.resize();
+    document.getElementById("buttonDelete").setAttribute("style","display:none;");
+    document.getElementById("buttonValid").innerHTML="Créer";
+    document.getElementById("exampleModalCenterTitle").innerHTML="Ajouté une page";
+  }
+  edit(id){
+    $('#exampleModalCenter').modal('show');
+    document.getElementById("buttonDelete").setAttribute("style","");
+    document.getElementById("buttonValid").innerHTML="Modifier";
+    document.getElementById("exampleModalCenterTitle").innerHTML="Modification de la page n°"+(id+1);
+    this.idTempo=id;
+    this.isEdit=true;
+    var text=this.pages[id].calculette.text;
+    document.getElementById("gestionPage").value=text;
+    this.calculette.text=text;
+    this.calculette.resize();
+  }
+  create(){
+    if(this.isEdit){
+      this.pages[this.idTempo].calculette.drawText(this.calculette.text);
+    }else{
+      this.pages.push(new Page(this.calculette.text,this.parent,this.pages.length));
+    }
+    this.reset();
+  }
+  reload(){
+    
+  }
+  updateTextCalculatrice(text){
+    this.calculette.drawText(text);
+  }
+  delete(){
+    this.pages[this.idTempo].delete();
+    this.pages.splice(this.idTempo,1);
+    this.pages.forEach(function(page,index){
+      page.setIndex(index);
+    });
+  }
+}
+class Page{
+  calculette;
+  divA;
+  divB;
+  divC;
+  index;
+  constructor(text,parent,index){
+    this.parent=parent;
+    this.divA=document.createElement('div');
+    this.divA.classList.add("card","bg-light", "mb-3");
+    this.divB=document.createElement('div');
+    this.divB.classList.add("card-header");
+    this.setIndex(index);
+    this.divA.appendChild(this.divB);
+    this.divC=document.createElement('div');
+    this.divC.classList.add("card-body","p-0");
+    this.divA.appendChild(this.divC);
+    this.calculette=new Calculette(this.divC,text);
+    this.parent.appendChild(this.divA);
+  }
+  setIndex(index){
+    this.index=index;
+    this.divB.innerHTML=`<div class="row"><div class="col"><h4 class="h4">Page n°${index+1}</h4></div><div class="col align-self-end text-right"><button class="btn btn-dark" onclick="pages.edit(${index})">Modifier</button></div></div>`;
+  }
+  delete(){
+    this.parent.removeChild(this.divA);
+  }
+}
+var pages;
+  window.addEventListener("load", function(event) {
+    pages=new PageManager(["page1","page2","page3"]);
+  });
+</script>
+</html>
+

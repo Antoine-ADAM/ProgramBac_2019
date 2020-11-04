@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer Programme{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Créer Programme</h1>
+        {{ include('identity/_form.html.twig', {form: form, button_label: 'Créer'}) }}
+    </div>
+{% endblock %}

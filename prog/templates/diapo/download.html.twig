@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block title 'Televerser' %}
+{% block body %}
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+
+            <h1 class="display-4">Mode d'Emploi</h1>
+            <div class="alert alert-warning" role="alert">
+                <strong>⚠</strong> Seule les calculatrices du model <strong>TI-83 premium CE</strong> sont suporté officielement <strong>⚠</strong>
+            </div>
+            <p class="lead"><strong>1</strong> - Télécharger et installer le logiciel <a href="https://education.ti.com/fr/products/computer-software/ti-connect-ce-sw" target = "_blank">TI Connectect CE</a></p>
+
+            <p class="lead"><strong>2</strong> - Connecter votre calculatrice au pc via le câble fournie avec la calculatrice</p>
+
+            <p class="lead"><strong>3</strong> - Lancé l'application TI Connectect CE puis cliquer sur ce bouton <img src="/img/pyramideCube.PNG"> (en haut à gauche de la fenetre)</p>
+
+            <p class="lead"><strong>4</strong> - <button type="button" id="buttonCopy" onclick="copy()" class="btn btn-info" data-container="body" data-toggle="popover" data-placement="top" data-content="Le code a bien été copié">Copier le programme</button> ci-dessous</p>
+
+            <p class="lead"><strong>5</strong> - Cliquer sur "Nouveau programme" puis coller le programme <kbd><kbd>ctrl</kbd> + <kbd>v</kbd></kbd></p>
+
+            <p class="lead"><strong>6</strong> - Renommer le programme <img src="/img/Rename.PNG"> (par exemple: MATH)</p>
+
+            <p class="lead"><strong>7</strong> - Cliquer sur ce bouton <img src="/img/calculatriceFleche.PNG"> (en haut à gauche de la fenetre)
+                Vous devriez voir une case cocher droite du nom de votre calculatrice si ce n'est pas le cas cocher la <img src="/img/Televerse.PNG">
+                si vous ne voier pas votre calculatrice s'est qu'elle n'est pas connecter au pc</p>
+
+            <p class="lead"><strong>8</strong> - Cliquer sur le bouton "ENVOYER", Le programme est installer et prés à être éxécuté</p>
+            <div class="alert alert-info" role="alert">
+                Vous pouvez aussi <a class="btn btn-success" href="{{ path("diapo.download.file",{id:diapo.id}) }}">Téléchargé</a> le fichier avec les explications et le code du programme. (Utilie pour pouvoir le réutiliser hors ligne)
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <h3 class="h3">Code</h3>
+        <hr>
+        <textarea id="codeCalculatrice" readonly style="width: 100%;" rows="50">{{ diapo.code }}</textarea>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script>
+    function copy() {
+        document.getElementById("codeCalculatrice").select();
+        document.execCommand("copy");
+        $("#buttonCopy").popover('show');
+        setTimeout(function () {
+            $("#buttonCopy").popover('hide');
+        },1500)
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <title>Programme</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="mt-4">
+                    <h3 class="h3">Modification du programme</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h4 class="h4">Contenue du programme</h4>
+                    <div id="contenue"></div>
+                </div>
+                <div class="col" id="cardItem" style="display: none;">
+                    <h3 class="h3" id="TitleSousProg" style="display: none;"><span class="badge badge-dark">Sous-Programme</span></h3>
+                    <div class="jumbotron jumbotron-fluid" id="jumbotronCardItem">
+                        <div class="container">
+                          <a class="h3 text-secondary" href="#" id="cardItemTitle"></a>
+                          <p class="lead" id="cardItemDecrip"></p>
+                          <footer class="blockquote-footer text-right" id="cardItemFooter"></footer>
+                        </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-danger" type="button" id="cardItemDelete">Enlever du menu</button>
+                            <span class="input-group-text" id="cardItemLabel">Nom dans le menu</span>
+                        </div>
+                        <input type="text" class="form-control" id="cardItemName" aria-describedby="cardItemLabel">
+                        <div class="input-group-append" id="button-addon4">
+                            <button class="btn btn-success" id="cardItemUpdate" type="button">Modifier</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modalAppendItem" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalScrollableTitle">Ajouter un élément</h5>
+                  <button type="button" onclick="progAppend.resetAll()" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body container">
+                    <div class="row">
+                        <div class="col text-center">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" id="modalAppendItemButtonDiapo" disabled class="btn btn-info" onclick="progAppend.switchPage(0)">Diapo</button>
+                                <button type="button" id="modalAppendItemButtonProg" class="btn btn-secondary" onclick="progAppend.switchPage(1)">Programme</button>
+                                <button type="button" id="modalAppendItemButtonSousProg" class="btn btn-dark" onclick="progAppend.switchPage(2)">Sous-programme</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="modalAppendItemPageDiapo">
+                        <div class="row mt-2">
+                            <div class="col text-center">
+                                <h3 class="h3">Ajouter un diapo</h3>
+                            </div>
+                        </div>
+                        <div class="row mx-3">    
+                            <div class="col">
+                                <h4 class="h4 pb-1 border-bottom">Liste du programme</h4>
+                                <div style="overflow-y: scroll;height: 500px;" id="cardContainerItemsDiapoP" isFavoris="false"></div>
+                            </div>
+                            <div class="col">
+                                <h4 class="h4 pb-1 border-bottom">Vos favoris</h4>
+                                <div style="overflow-y: scroll;height: 500px;" id="cardContainerItemsDiapoF" isFavoris="true"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="modalAppendItemPageProg" style="display: none;">
+                        <div class="row mt-2">
+                            <div class="col text-center">
+                                <h3 class="h3">Ajouter un programme</h3>
+                            </div>
+                        </div>
+                        <div class="row mx-3">    
+                            <div class="col">
+                                <h4 class="h4 pb-1 border-bottom">Liste du programme</h4>
+                                <div style="overflow-y: scroll;height: 500px;" id="cardContainerItemsProgP" isFavoris="false"></div>
+                            </div>
+                            <div class="col">
+                                <h4 class="h4 pb-1 border-bottom">Vos favoris</h4>
+                                <div style="overflow-y: scroll;height: 500px;" id="cardContainerItemsProgF" isFavoris="true"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-4 mt-2" style="display: none;" id="modalAppendItemPageSousProg">
+                        <div class="col text-center">
+                            <h3 class="h3">Ajouter un sous-programme</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mt-2">
+                            <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="nameItemAppendSpan">Nom du diapo</span>
+                            </div>
+                            <input id="nameItemAppend" type="text" class="form-control" placeholder="Ex:Math" aria-label="name" aria-describedby="nameItemAppendSpan">
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="progAppend.create()" class="btn btn-primary">Créer</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="progAppend.resetAll()">Fermer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+    <script src="prog.js"></script>
+</html>

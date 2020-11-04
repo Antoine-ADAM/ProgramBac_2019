@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+{% block title 'Modification du diapo' %}
+{% block body %}
+    <div class="container mt-4">
+        <div class="row text-center">
+            <h1 class="col align-self-center">Modification du diapo</h1>
+        </div>
+        <div class="row">
+            <div class="col-md">
+                <div id="pages">
+                    {% for page in pages %}
+                        {{ include('diapo/_page.html.twig', {page: page, modif: true, numero: loop.index}) }}
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="setupP('newCal')" data-toggle="modal" data-target="#exampleModalCenter">Ajouter une Page</button>
+                <div class="modal fade" id="exampleModalCenter" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Page n°1</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center container">
+                                <div class="row">
+                                    <div class="col">
+                                        <iframe src="/ti.html" name="newCal" width="500px" height="375px"></iframe>
+                                    </div>
+                                    <div class="col">
+                                    <textarea class="" style="font-size: 20px" name="test" id="test" cols="33" maxlength="429" onkeyup="updateP(this.value,'newCal')"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                                <button type="button" onclick="sendAddPage();" class="btn btn-primary" data-dismiss="modal">Créer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <button class="btn btn-primary">Modifier</button>
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+<script>
+    var textes=[
+        {% for page in pages %}
+        "{{ page.text }}",
+        {% endfor %}""
+    ];
+    textes.pop();
+    function updatePage(id) {
+        window.parent.frames['page'+id].document.getElementById('update').value=textes[id-1];
+        window.parent.frames['page'+id].document.getElementById('update').onchange();
+    }
+    function prePage(i) {
+        document.getElementById('page'+i).style.height=window.parent.frames['page'+i].innerWidth*0.75+"px";
+        window.parent.frames['page'+i].document.getElementById('setup').onchange();
+    }
+    function resizeEventPage(){
+        console.log("resize");
+        for(var i=1; i<=textes.length;i++)prePage(i);
+        setTimeout(function () {
+            for(var i=1;i<=textes.length;i++)updatePage(i);
+        },500)
+    }
+
+    window.addEventListener("load", function () {
+        resizeEventPage();
+    });
+    var texte="";
+    function setupP(name) {
+        setTimeout(function () {
+            window.parent.frames[name].document.getElementById('setup').onchange();
+        },500);
+    }
+    function createPageStatic() {
+        var i=textes.length+1;
+        var pages=document.getElementById("pages");
+        var a=document.createElement('div');
+        a.classList.add("card","bg-light", "mb-3");
+        pages.appendChild(a);
+        var b=document.createElement('div');
+        b.classList.add("card-header");
+        b.innerHTML="Page "+i;
+        a.appendChild(b);
+        var c=document.createElement('div');
+        c.classList.add("card-body");
+        a.appendChild(c);
+        var jframe=document.createElement("jframe");
+        jframe.setAttribute("src","/ti.html");
+        jframe.setAttribute("name","page"+i);
+        jframe.setAttribute("id","page"+i);
+        jframe.setAttribute("width","100%");
+        c.appendChild(jframe);
+        jframe.src+="";
+        textes.push(texte);
+        prePage(i);
+        setTimeout(function () {
+            updatePage(i);
+        },500)
+    }
+    function updateP(text,name) {
+        console.log("AV=>"+text+"|>");
+        var liste=text.split("\n");
+        text="";
+        for(var i=0;i<liste.length-1;i++){
+            text+=liste[i];
+            for(var ii = 33-(liste[i].length%33);ii>0;ii--)text+=" ";
+        }
+        text+=liste[liste.length-1];
+        text=text.substring(0,429);
+        texte=text;
+        console.log("AP=>"+text+"|>");
+        window.parent.frames[name].document.getElementById('update').value=text;
+        window.parent.frames[name].document.getElementById('update').onchange();
+        /**
+        var liste=this.value.split("\n");
+        var ligne=liste.length-1;
+        for(var i=0;i<liste.length;i++){
+            console.log(liste[i].length);
+            ligne+=parseInt((liste[i].length)/21,10);
+            if(((liste[i].length)%21) != 0)ligne++;
+        }
+        console.log(ligne);
+        if(ligne>13)this.value=this.value.substring(0,this.value.length-1);**/
+    }
+    function sendAddPage(){
+        var XHR = new XMLHttpRequest();
+        var FD  = new FormData();
+        FD.append("textPage", texte);
+        XHR.addEventListener('load', function(event) {
+
+        });
+        XHR.addEventListener('error', function(event) {
+
+        });
+        XHR.onreadystatechange = function() {
+            if (XHR.readyState === 4) {
+                console.log(XHR.response);
+                createPageStatic();
+            }
+        }
+        XHR.open('POST', "{{ path("page.add",{id:diapo.id}) }}");
+        XHR.send(FD);
+    }
+</script>
+{% endblock %}

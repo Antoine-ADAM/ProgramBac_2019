@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="container mt-4">
+        <h1>Créer un compte</h1>
+        {{ include('security/_form.html.twig', {form: form, button: 'Créer'}) }}
+    </div>
+{% endblock %}
